@@ -25,14 +25,14 @@ import qualified System.IO as IO
 data Mapper m = forall input k v. Mapper
   (Text -> input)
   -- ^ Decoder for mapper input
-  ((k, v) -> Text)
+  (k -> v -> Text)
   -- ^ Encoder for mapper output
-  (forall r. Pipe input (k, v) m r)
+  (Pipe input (k, v) m ())
   -- ^ A 'Pipe' transforming @input@ into @(k, v)@ pairs.
 
 runMapper :: MonadIO m => Mapper m -> m ()
 runMapper (Mapper dec enc trans) = runEffect $
-  stdin >-> Pipes.map dec >-> trans >-> Pipes.map enc >-> stdout
+  stdin >-> Pipes.map dec >-> trans >-> Pipes.map (uncurry enc) >-> stdout
 
 stdin :: MonadIO m => Producer' Text m ()
 stdin = unlessM (liftIO IO.isEOF) (liftIO Text.getLine >>= Pipes.yield >> stdin)
