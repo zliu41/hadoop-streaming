@@ -7,7 +7,7 @@ module HadoopStreaming
   , runMapper
   , println
   , incCounter
-  , incCounter'
+  , incCounterBy
   ) where
 
 import           Control.Exception.Extra (handle_)
@@ -22,6 +22,8 @@ import qualified Pipes.Prelude as Pipes
 import           System.Exit (die)
 import qualified System.IO as IO
 
+-- | A @Mapper@ consists of a decoder, an encoder, and a 'Pipe' transforming
+-- each input into a (key, value) pair.
 data Mapper m = forall input k v. Mapper
   (Text -> input)
   -- ^ Decoder for mapper input
@@ -35,7 +37,9 @@ runMapper (Mapper dec enc trans) = runEffect $
   stdin >-> Pipes.map dec >-> trans >-> Pipes.map (uncurry enc) >-> stdout
 
 stdin :: MonadIO m => Producer' Text m ()
-stdin = unlessM (liftIO IO.isEOF) (liftIO Text.getLine >>= Pipes.yield >> stdin)
+stdin = go >-> Pipes.filter (not . Text.all (== ' '))
+  where
+    go = unlessM (liftIO IO.isEOF) (liftIO Text.getLine >>= Pipes.yield >> go)
 
 stdout :: MonadIO m => Consumer' Text m r
 stdout = Pipes.for Pipes.cat (liftIO . Text.putStrLn)
@@ -50,14 +54,14 @@ incCounter
   => Text -- ^ Group name. Must not contain comma.
   -> Text -- ^ Counter name. Must not contain comma.
   -> m ()
-incCounter group name = incCounter' group name 1
+incCounter = incCounterBy 1
 
 -- | Increment a counter by @n@.
-incCounter'
+incCounterBy
   :: MonadIO m
-  => Text -- ^ Group name. Must not contain comma.
+  => Int
+  -> Text -- ^ Group name. Must not contain comma.
   -> Text -- ^ Counter name. Must not contain comma.
-  -> Int
   -> m ()
-incCounter' group name n = println $
+incCounterBy n group name = println $
   "reporter:counter:" <> Text.intercalate "," [group, name, Text.pack (show n)]
