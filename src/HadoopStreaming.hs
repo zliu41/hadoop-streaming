@@ -60,4 +60,4 @@ incCounter'
   -> Int
   -> m ()
 incCounter' group name n = println $
-  Text.intercalate "," [group, name, Text.pack (show n)]
+  "reporter:counter:" <> Text.intercalate "," [group, name, Text.pack (show n)]
