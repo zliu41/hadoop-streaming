@@ -4,12 +4,16 @@ let
 
   inherit (nixpkgs) pkgs;
 
-  f = { mkDerivation, base, extra, pipes, stdenv, text }:
+  f = { mkDerivation, base, conduit, extra, hspec, hspec-discover
+      , stdenv, text
+      }:
       mkDerivation {
         pname = "hadoop-streaming";
         version = "0.1.0.0";
         src = ./.;
-        libraryHaskellDepends = [ base extra pipes text ];
+        libraryHaskellDepends = [ base conduit extra text ];
+        testHaskellDepends = [ base conduit extra hspec text ];
+        testToolDepends = [ hspec-discover ];
         homepage = "https://github.com/zliu41/hadoop-streaming";
         description = "A simple Hadoop streaming library";
         license = stdenv.lib.licenses.bsd3;
