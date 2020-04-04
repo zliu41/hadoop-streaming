@@ -29,6 +29,7 @@ source-repository head
 library
   exposed-modules:
       HadoopStreaming
+      HadoopStreaming.Text
   other-modules:
       Paths_hadoop_streaming
   autogen-modules:
