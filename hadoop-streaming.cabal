@@ -1,7 +1,7 @@
 cabal-version:       2.4
 
 name:                hadoop-streaming
-version:             0.2.0.0
+version:             0.2.0.1
 synopsis:            A simple Hadoop streaming library
 description:
   A simple Hadoop streaming library based on <https://hackage.haskell.org/package/conduit conduit>,

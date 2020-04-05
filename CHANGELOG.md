@@ -1,5 +1,9 @@
 # Revision history for hadoop-streaming
 
+## 0.2.0.1 -- 2020-04-05
+
+* Fix a broken link.
+
 ## 0.2.0.0 -- 2020-04-05
 
 * Make input and output types abstract.
