@@ -6,7 +6,7 @@ Hackage: https://hackage.haskell.org/package/hadoop-streaming
 
 # Word Count Example
 
-See the [Haddock in `HadoopStreaming.Text`](https://hackage.haskell.org/package/hadoop-streaming-0.1.0.0/docs/HadoopStreaming-Text.html)
+See the [Haddock in `HadoopStreaming.Text`](https://hackage.haskell.org/package/hadoop-streaming/docs/HadoopStreaming-Text.html)
 for a simple word-count example.
 
 # A Few Things to Note
