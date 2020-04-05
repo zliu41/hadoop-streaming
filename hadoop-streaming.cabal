@@ -1,7 +1,7 @@
 cabal-version:       2.4
 
 name:                hadoop-streaming
-version:             0.1.0.0
+version:             0.2.0.0
 synopsis:            A simple Hadoop streaming library
 description:
   A simple Hadoop streaming library based on <https://hackage.haskell.org/package/conduit conduit>,
@@ -29,6 +29,7 @@ source-repository head
 library
   exposed-modules:
       HadoopStreaming
+      HadoopStreaming.ByteString
       HadoopStreaming.Text
   other-modules:
       Paths_hadoop_streaming
@@ -38,6 +39,7 @@ library
       src
   build-depends:
       base >=4.12 && <5,
+      bytestring >=0.10 && <0.11,
       conduit >= 1.3.1 && <1.4,
       extra >= 1.6.18 && <1.8,
       text >=1.2.4.0 && <1.3
@@ -53,10 +55,10 @@ test-suite hspec
   ghc-options: -Wall -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base,
+      bytestring,
       conduit,
       extra,
       hspec,
-      text,
       hadoop-streaming
   default-language: Haskell2010
   build-tool-depends: hspec-discover:hspec-discover == 2.*

@@ -4,15 +4,15 @@ let
 
   inherit (nixpkgs) pkgs;
 
-  f = { mkDerivation, base, conduit, extra, hspec, hspec-discover
-      , stdenv, text
+  f = { mkDerivation, base, bytestring, conduit, extra, hspec
+      , hspec-discover, stdenv, text
       }:
       mkDerivation {
         pname = "hadoop-streaming";
-        version = "0.1.0.0";
+        version = "0.2.0.0";
         src = ./.;
-        libraryHaskellDepends = [ base conduit extra text ];
-        testHaskellDepends = [ base conduit extra hspec text ];
+        libraryHaskellDepends = [ base bytestring conduit extra text ];
+        testHaskellDepends = [ base bytestring conduit extra hspec ];
         testToolDepends = [ hspec-discover ];
         homepage = "https://github.com/zliu41/hadoop-streaming";
         description = "A simple Hadoop streaming library";

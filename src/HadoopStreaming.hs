@@ -3,6 +3,14 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RankNTypes #-}
 
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  HadoopStreaming
+-- Maintainer  :  Ziyang Liu <free@cofree.io>
+--
+-- Hadoop streaming makes it possible to write Hadoop jobs in Haskell. See the
+-- <https://hadoop.apache.org/docs/current/hadoop-streaming/HadoopStreaming.html official documentation> for how
+-- Hadoop streaming works. See "HadoopStreaming.Text" for a word count example.
 module HadoopStreaming
   ( Mapper(..)
   , Reducer(..)
@@ -24,7 +32,7 @@ import qualified Data.Text.IO as Text
 import qualified System.IO as IO
 
 
--- | A @Mapper@ consists of a decoder, an encoder, and a stream that transforms
+-- | A @Mapper@ consists of a decoder, an encoder, and a stream transforming
 -- input into @(key, value)@ pairs.
 data Mapper i o e m = forall j k v. Mapper
   (i -> Either e j)
@@ -34,7 +42,7 @@ data Mapper i o e m = forall j k v. Mapper
   (ConduitT j (k, v) m ())
   -- ^ A stream transforming @input@ into @(k, v)@ pairs.
 
--- | A @Reducer@ consists of a decoder, an encoder, and a stream that transforms
+-- | A @Reducer@ consists of a decoder, an encoder, and a stream transforming
 -- each key and all values associated with the key into some result values.
 data Reducer i o e m = forall k v r. Eq k => Reducer
   (i -> Either e (k, v))
@@ -71,15 +79,15 @@ runMapper
   -- a value for each line of the input, as that is how Hadoop streaming is supposed
   -- to work, but this is not enforced. For example, if you really want to, you can produce a single
   -- value for the entire input split (which can be done using @Data.Conduit.Combinators.stdin@
-  -- as the source). Note that regardless of what the source does, the Hadoop counter
-  -- @"Map-Reduce Framework: Map input records"@ is always the number of lines of the input, because
-  -- this counter is managed by the Hadoop framework.
+  -- as the source). Note that regardless of what the source does, the values of Hadoop counters
+  -- "Map input records" and "Reduce input records" are always the number of lines of the mapper and reducer
+  -- input, because these counters are managed by the Hadoop framework.
   --
-  -- An example is 'HadoopStreaming.Text.stdin', which streams from @stdin@ as 'Text', one line
+  -- An example is 'HadoopStreaming.Text.stdinLn', which streams from 'IO.stdin' as 'Text', one line
   -- at a time.
   -> ConduitT o C.Void m ()
-  -- ^ Mapper sink. It should generally stream to @stdout@. An example is
-  -- 'HadoopStreaming.Text.stdout'.
+  -- ^ Mapper sink. It should generally stream to 'IO.stdout'. An example is
+  -- 'HadoopStreaming.Text.stdoutLn'.
   -> (i -> e -> m ())
   -- ^ An action to be executed for each input that cannot be decoded. The first parameter
   -- is the input and the second parameter is the decoding error. One may choose to, for instance,
@@ -114,7 +122,7 @@ reduceKey f = go
     go = C.await >>= maybe (pure ()) \((k, v), kvs) ->
       C.yieldMany (map snd kvs) .| f k v >> go
 
--- | Like 'Text.putStrLn', but writes to 'stderr'.
+-- | Like 'Text.putStrLn', but writes to 'IO.stderr'.
 println :: MonadIO m => Text -> m ()
 println = liftIO . Text.hPutStrLn IO.stderr
 

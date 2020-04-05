@@ -5,11 +5,57 @@
 {-# LANGUAGE TupleSections #-}
 {-# LANGUAGE TypeApplications #-}
 
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  HadoopStreaming.Text
+-- Maintainer  :  Ziyang Liu <free@cofree.io>
+--
+-- This module has some utilities for working with 'Text' in Hadoop streaming.
+--
+-- Word count example:
+--
+-- @
+--  {-\# LANGUAGE OverloadedStrings, TupleSections \#-}
+--
+--  import Data.Conduit (ConduitT)
+--  import qualified Data.Conduit as C
+--  import qualified Data.Conduit.Combinators as C
+--  import Data.Void (Void)
+--  import HadoopStreaming
+--  import qualified HadoopStreaming.Text as HT
+--  import Data.Text (Text)
+--  import qualified Data.Text as Text
+--
+--  mapper :: Mapper Text Text Void IO
+--  mapper = Mapper dec enc trans
+--    where
+--      dec :: Text -> Either Void [Text]
+--      dec = Right . Text.words
+--
+--      enc :: Text -> Int -> Text
+--      enc = HT.defaultKeyValueEncoder id (Text.pack . show)
+--
+--      trans :: ConduitT [Text] (Text, Int) IO ()
+--      trans = C.concatMap (map (,1))
+--
+--  reducer :: Reducer Text Text Void IO
+--  reducer = Reducer dec enc trans
+--    where
+--      dec :: Text -> Either Void (Text, Int)
+--      dec i = Right (i1, read . tail . Text.unpack $ i2)
+--        where (i1, i2) = Text.break (== '\\t') i
+--
+--      enc :: (Text, Int) -> Text
+--      enc (t, c) = t <> "," <> Text.pack (show c)
+--
+--      trans :: Text -> Int -> ConduitT Int (Text, Int) IO ()
+--      trans k v0 = C.foldl (+) v0 >>= C.yield . (k,)
+-- @
 module HadoopStreaming.Text
   ( sourceHandle
   , sinkHandle
-  , stdin
-  , stdout
+  , stdinLn
+  , stdoutLn
   , defaultKeyValueEncoder
   , defaultKeyValueDecoder
   ) where
@@ -49,15 +95,15 @@ sinkHandle h = C.awaitForever (liftIO . Text.hPutStrLn h)
 
 -- | Stream the contents from 'System.IO.stdin' one line at a time as 'Text'.
 --
--- > stdin = sourceHandle throwM System.IO.stdin
-stdin :: (MonadIO m, MonadThrow m) => ConduitT i Text m ()
-stdin = sourceHandle throwM IO.stdin
+-- > stdinLn = sourceHandle throwM System.IO.stdin
+stdinLn :: (MonadIO m, MonadThrow m) => ConduitT i Text m ()
+stdinLn = sourceHandle throwM IO.stdin
 
 -- | Stream data to 'System.IO.stdout', separated by @\\n@.
 --
--- > stdout = sinkHandle System.IO.stdout
-stdout :: MonadIO m => ConduitT Text o m ()
-stdout = sinkHandle IO.stdout
+-- > stdoutLn = sinkHandle System.IO.stdout
+stdoutLn :: MonadIO m => ConduitT Text o m ()
+stdoutLn = sinkHandle IO.stdout
 
 -- | Encode a key-value pair by separating them with a tab, which is the default way
 -- the mapper output should be formatted.
