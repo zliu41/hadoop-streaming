@@ -22,7 +22,7 @@ spec =
   describe "Testing HadoopStreaming" $ do
     it "test case 1 - mapper" $ do
       let fin = "test/resource/1.in"
-          fout = "test/resource/1.mapper-out"
+          fout = "test/resource/1.mapper.out"
       actual <- withFile fin ReadMode $ \hin ->
         withTempFile $ \temp -> do
           withFile temp WriteMode $ \hout -> do
@@ -43,7 +43,7 @@ spec =
 
     it "test case 1 - reducer" $ do
       let fin = "test/resource/1.in"
-          fout = "test/resource/1.reducer-out"
+          fout = "test/resource/1.reducer.out"
       actual <- withFile fin ReadMode $ \hin ->
         withTempFile $ \temp -> do
           withFile temp WriteMode $ \hout -> do
@@ -64,7 +64,7 @@ spec =
 
     it "test case 1 - mapper - odd keys" $ do
       let fin = "test/resource/1.in"
-          fout = "test/resource/1.mapper-out-oddkeys"
+          fout = "test/resource/1.mapper.oddkeys.out"
       actual <- withFile fin ReadMode $ \hin ->
         withTempFile $ \temp -> do
           withFile temp WriteMode $ \hout -> do

@@ -9,7 +9,7 @@ let
       }:
       mkDerivation {
         pname = "hadoop-streaming";
-        version = "0.2.0.1";
+        version = "0.2.0.2";
         src = ./.;
         libraryHaskellDepends = [ base bytestring conduit extra text ];
         testHaskellDepends = [ base bytestring conduit extra hspec ];
