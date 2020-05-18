@@ -1,6 +1,10 @@
 # Revision history for hadoop-streaming
 
-## 0.2.0.1 -- 2020-04-06
+## 0.2.0.3 -- 2020-05-18
+
+* Update text lower bound.
+
+## 0.2.0.2 -- 2020-04-06
 
 * Add test files to the tarball.
 
