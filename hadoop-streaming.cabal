@@ -16,7 +16,7 @@ author:              Ziyang Liu <free@cofree.io>
 maintainer:          Ziyang Liu <free@cofree.io>
 copyright:           2020 Ziyang Liu
 build-type:          Simple
-tested-with:         GHC==8.8.3, GHC==8.6.5
+tested-with:         GHC==8.10.1, GHC==8.8.3, GHC==8.6.5
 
 extra-source-files:
     CHANGELOG.md
