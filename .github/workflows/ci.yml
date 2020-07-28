@@ -12,7 +12,6 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        cabal: ["3.2"]
         ghc: ["8.6.5", "8.8.3", "8.10.1"]
     steps:
       - uses: actions/checkout@v2
@@ -20,7 +19,7 @@ jobs:
         id: setup-haskell-cabal
         with:
           ghc-version: ${{ matrix.ghc }}
-          cabal-version: ${{ matrix.cabal }}
+          cabal-version: "3.2"
       - run: cabal v2-update
       - run: cabal v2-freeze
       - uses: actions/cache@v2
