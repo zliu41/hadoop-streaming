@@ -24,7 +24,7 @@ import           Control.Exception (IOException, try)
 import           Control.Monad.Extra (unlessM, (>=>))
 import           Control.Monad.IO.Class (MonadIO(..))
 import           Data.Conduit (ConduitT, (.|))
-import qualified Data.Conduit as C
+import qualified Data.Conduit as D
 import qualified Data.Conduit.Combinators as C
 import           Data.ByteString (ByteString)
 import qualified Data.ByteString.Char8 as BC
